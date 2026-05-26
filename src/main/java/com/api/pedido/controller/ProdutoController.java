@@ -26,6 +26,11 @@ public class ProdutoController {
         return service.listar();
     }
 
+    @GetMapping("/{id}")
+    public Produto buscarPorId(@PathVariable Long id){
+        return service.buscarPorId(id);
+    }
+
     @PostMapping
     public Produto salvar(@RequestBody Produto produto){
         return service.salvar(produto);
