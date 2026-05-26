@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,17 +28,23 @@ public class PedidoService {
     @Autowired
     private ProdutoRepository produtoRepository;
 
-    public List<PedidoDTO> listar(){
+    public List<PedidoDTO> listar() {
 
-        List<Pedido> lista = pedidoRepository.findAll(); 
+        List<Pedido> lista = pedidoRepository.findAll();
 
-        return lista.stream().
-            map(this::converterDTO)
+        return lista.stream().map(this::converterDTO)
             .toList();
+    }
+    
+
+    public PedidoDTO buscarPorId(Long id) {
+        Pedido pedido = pedidoRepository.findById(id).orElseThrow();
+
+        return converterDTO(pedido);
     }
 
 
-    public PedidoDTO salvar(PedidoRequestDTO dto){
+    public PedidoDTO salvar(PedidoRequestDTO dto) {
         Pedido pedido = new Pedido();
 
         pedido.setDataPedido(LocalDateTime.now());
@@ -48,7 +53,7 @@ public class PedidoService {
 
         Double total = 0.0;
 
-        for (ItemPedidoRequestDTO itemDTO : dto.itens()){
+        for (ItemPedidoRequestDTO itemDTO : dto.itens()) {
             Produto produto = produtoRepository.findById(itemDTO.produtoId())
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado!"));
 
@@ -56,8 +61,7 @@ public class PedidoService {
                 pedido,
                 produto,
                 itemDTO.quantidade(),
-                produto.getPreco()
-            );
+                produto.getPreco());
 
             total += item.getSubTotal();
 
@@ -73,21 +77,28 @@ public class PedidoService {
     }
 
 
-    private PedidoDTO converterDTO(Pedido pedido){
+    public void deletar(Long id) {
+        pedidoRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        pedidoRepository.deleteById(id);
+    }
+
+
+    private PedidoDTO converterDTO(Pedido pedido) {
         Set<ItemPedidoDTO> itens = pedido.getItens().stream()
             .map(item -> new ItemPedidoDTO(
                 item.getProduto().getNome(),
                 item.getQuantidade(),
                 item.getPrecoUnitario(),
-                item.getSubTotal()
-            )).collect(Collectors.toSet());
+                item.getSubTotal()))
+            .collect(Collectors.toSet());
 
         return new PedidoDTO(
             pedido.getId(),
             pedido.getDataPedido(),
             pedido.getValorTotal(),
-            itens
-        );
+            itens);
     }
 
 }
