@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.pedido.domain.Produto;
+import com.api.pedido.dtos.ProdutoDTO;
 import com.api.pedido.service.ProdutoService;
 
 @RestController
@@ -23,27 +24,27 @@ public class ProdutoController {
     private ProdutoService service;
 
     @GetMapping
-    public List<Produto> listar(){
+    public List<ProdutoDTO> listar(){
         return service.listar();
     }
 
     @GetMapping("/{id}")
-    public Produto buscarPorId(@PathVariable Long id){
+    public ProdutoDTO buscarPorId(@PathVariable Long id){
         return service.buscarPorId(id);
     }
 
     @GetMapping("/buscar")
-    public List<Produto> buscar(@RequestParam String nome){
+    public List<ProdutoDTO> buscar(@RequestParam String nome){
         return service.buscarPorNome(nome);
     }
 
     @PostMapping
-    public Produto salvar(@RequestBody Produto produto){
+    public ProdutoDTO salvar(@RequestBody Produto produto){
         return service.salvar(produto);
     }
 
     @PutMapping("/{id}")
-    public Produto editar(@PathVariable Long id, @RequestBody Produto produtoAtualizado){
+    public ProdutoDTO editar(@PathVariable Long id, @RequestBody Produto produtoAtualizado){
         return service.editar(id, produtoAtualizado);
     }
 
