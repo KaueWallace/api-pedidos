@@ -4,8 +4,12 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.api.pedido.domain.enums.EstadoPedido;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,7 +33,9 @@ public class Pedido {
 
     private Double valorTotal;
 
-    @OneToMany(mappedBy = "id.pedido", cascade =  CascadeType.ALL)
+    @Enumerated(EnumType.STRING)
+    private EstadoPedido status;
 
+    @OneToMany(mappedBy = "id.pedido", cascade =  CascadeType.ALL)
     private Set<ItemPedido> itens = new HashSet<>();
 }
