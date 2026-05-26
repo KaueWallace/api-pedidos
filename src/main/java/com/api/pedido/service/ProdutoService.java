@@ -21,6 +21,10 @@ public class ProdutoService {
         return repository.findById(id).orElseThrow();
     }
 
+    public List<Produto> buscarPorNome(String nome) {
+        return repository.findByNomeContainingIgnoreCase(nome);
+    }
+
     public Produto salvar(Produto produto) {
         return repository.save(produto);
     }

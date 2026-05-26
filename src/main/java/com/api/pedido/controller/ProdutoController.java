@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.pedido.domain.Produto;
@@ -29,6 +30,11 @@ public class ProdutoController {
     @GetMapping("/{id}")
     public Produto buscarPorId(@PathVariable Long id){
         return service.buscarPorId(id);
+    }
+
+    @GetMapping("/buscar")
+    public List<Produto> buscar(@RequestParam String nome){
+        return service.buscarPorNome(nome);
     }
 
     @PostMapping
