@@ -11,9 +11,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.api.pedido.domain.enums.UserRole;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,7 +32,11 @@ public class Usuario implements UserDetails {
     private String nome;
     private String email;
     private String senha;
+    @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @OneToMany(mappedBy = "usuario")
+    private List<Pedido> pedidos;
 
     public Usuario(String email, String senha, UserRole role){
         this.email = email;

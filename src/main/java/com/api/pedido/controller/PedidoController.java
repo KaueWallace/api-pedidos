@@ -31,6 +31,12 @@ public class PedidoController {
         return service.listar();
     }
 
+    @GetMapping("/meus")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public List<PedidoDTO> listarMeusPedidos() {
+        return service.listarMeusPedidos();
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public PedidoDTO buscarPorId(@PathVariable Long id){
