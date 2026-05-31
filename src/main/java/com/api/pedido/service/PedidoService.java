@@ -54,6 +54,17 @@ public class PedidoService {
         return converterDTO(pedido);
     }
 
+    public PedidoDTO buscarMeuPedidoPorId(Long id) {
+
+        Usuario usuario = getUsuarioLogado();
+
+        Pedido pedido = pedidoRepository
+                .findByIdAndUsuario(id, usuario)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        return converterDTO(pedido);
+    }
+
     public PedidoDTO salvar(PedidoRequestDTO dto) {
         Usuario usuario = getUsuarioLogado();
         Pedido pedido = new Pedido();
@@ -125,12 +136,11 @@ public class PedidoService {
                 itens);
     }
 
-
     private Usuario getUsuarioLogado() {
         return (Usuario) SecurityContextHolder
-        .getContext()
-        .getAuthentication()
-        .getPrincipal();
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
     }
 
 }

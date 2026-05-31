@@ -27,7 +27,7 @@ public class PedidoController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public List<PedidoDTO> listar(){
+    public List<PedidoDTO> listar() {
         return service.listar();
     }
 
@@ -39,25 +39,31 @@ public class PedidoController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public PedidoDTO buscarPorId(@PathVariable Long id){
+    public PedidoDTO buscarPorId(@PathVariable Long id) {
         return service.buscarPorId(id);
+    }
+
+    @GetMapping("/meu/{id}")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public PedidoDTO buscarMeuPedido(@PathVariable Long id) {
+        return service.buscarMeuPedidoPorId(id);
     }
 
     @PostMapping
     @PreAuthorize("hasRole('CLIENTE')")
-    public PedidoDTO salvar(@RequestBody PedidoRequestDTO dto){
+    public PedidoDTO salvar(@RequestBody PedidoRequestDTO dto) {
         return service.salvar(dto);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public void deletar(@PathVariable Long id){
+    public void deletar(@PathVariable Long id) {
         service.deletar(id);
     }
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
-    public PedidoDTO atualizarStatus(@PathVariable Long id, @RequestBody AtualizarStatusDTO dto){
+    public PedidoDTO atualizarStatus(@PathVariable Long id, @RequestBody AtualizarStatusDTO dto) {
         return service.atualizarStatus(id, dto);
     }
 
