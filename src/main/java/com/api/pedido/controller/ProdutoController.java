@@ -3,6 +3,7 @@ package com.api.pedido.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,31 +25,37 @@ public class ProdutoController {
     private ProdutoService service;
 
     @GetMapping
+    @PreAuthorize("hasRole('CLIENTE')")
     public List<ProdutoDTO> listar(){
         return service.listar();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('CLIENTE')")
     public ProdutoDTO buscarPorId(@PathVariable Long id){
         return service.buscarPorId(id);
     }
 
     @GetMapping("/buscar")
+    @PreAuthorize("hasRole('CLIENTE')")
     public List<ProdutoDTO> buscar(@RequestParam String nome){
         return service.buscarPorNome(nome);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ProdutoDTO salvar(@RequestBody Produto produto){
         return service.salvar(produto);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ProdutoDTO editar(@PathVariable Long id, @RequestBody Produto produtoAtualizado){
         return service.editar(id, produtoAtualizado);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deletar(@PathVariable Long id){
         service.deletar(id);
     }
