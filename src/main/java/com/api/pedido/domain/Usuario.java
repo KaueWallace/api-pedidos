@@ -38,6 +38,11 @@ public class Usuario implements UserDetails {
     @OneToMany(mappedBy = "usuario")
     private List<Pedido> pedidos;
 
+
+    @OneToMany(mappedBy = "usuario")
+    private List<Endereco> enderecos;
+
+
     public Usuario(String email, String senha, UserRole role){
         this.email = email;
         this.senha = senha;

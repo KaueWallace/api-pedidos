@@ -3,11 +3,14 @@ package com.api.pedido.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.api.pedido.domain.Endereco;
+import com.api.pedido.domain.Usuario;
 import com.api.pedido.dtos.EnderecoCadastroDTO;
 import com.api.pedido.dtos.EnderecoDTO;
+import com.api.pedido.dtos.UsuarioResumoDTO;
 import com.api.pedido.repository.EnderecoRepository;
 
 @Service
@@ -35,12 +38,15 @@ public class EnderecoService {
     public EnderecoDTO cadastrar(EnderecoCadastroDTO dto){
         Endereco endereco = new Endereco();
 
+        Usuario usuario = getUsuarioLogado();
+
         endereco.setCep(dto.cep());
         endereco.setNumero(dto.numero());
         endereco.setBairro(dto.bairro());
         endereco.setCidade(dto.cidade());
         endereco.setComplemento(dto.complemento());
         endereco.setEstado(dto.estado());
+        endereco.setUsuario(usuario);
 
         Endereco salvo = repository.save(endereco);
 
@@ -65,6 +71,13 @@ public class EnderecoService {
     }
 
     private EnderecoDTO converterDTO(Endereco endereco){
+
+        UsuarioResumoDTO usuario = new UsuarioResumoDTO(
+            endereco.getUsuario().getId(),
+            endereco.getUsuario().getNome(),
+            endereco.getUsuario().getEmail()
+        );
+
         EnderecoDTO dto = new EnderecoDTO(
             endereco.getId(),
             endereco.getCep(),
@@ -76,6 +89,14 @@ public class EnderecoService {
         );
 
         return dto;
+    }
+
+
+    private Usuario getUsuarioLogado() {
+        return (Usuario) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
     }
 
 }

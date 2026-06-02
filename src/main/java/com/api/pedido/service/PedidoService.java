@@ -10,17 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.api.pedido.domain.Endereco;
 import com.api.pedido.domain.ItemPedido;
 import com.api.pedido.domain.Pedido;
 import com.api.pedido.domain.Produto;
 import com.api.pedido.domain.Usuario;
 import com.api.pedido.domain.enums.EstadoPedido;
 import com.api.pedido.dtos.AtualizarStatusDTO;
+import com.api.pedido.dtos.EnderecoDTO;
 import com.api.pedido.dtos.ItemPedidoDTO;
 import com.api.pedido.dtos.ItemPedidoRequestDTO;
 import com.api.pedido.dtos.PedidoDTO;
 import com.api.pedido.dtos.PedidoRequestDTO;
 import com.api.pedido.dtos.UsuarioResumoDTO;
+import com.api.pedido.repository.EnderecoRepository;
 import com.api.pedido.repository.PedidoRepository;
 import com.api.pedido.repository.ProdutoRepository;
 
@@ -32,6 +35,9 @@ public class PedidoService {
 
     @Autowired
     private ProdutoRepository produtoRepository;
+
+    @Autowired
+    private EnderecoRepository enderecoRepository;
 
     public List<PedidoDTO> listar() {
         List<Pedido> lista = pedidoRepository.findAll();
@@ -74,6 +80,10 @@ public class PedidoService {
 
         pedido.setDataPedido(LocalDateTime.now());
         pedido.setStatus(EstadoPedido.PENDENTE);
+
+        Endereco endereco = enderecoRepository.findByIdAndUsuario(dto.enderecoId(), usuario).orElseThrow(() -> new RuntimeException("Endereço não encontrado!"));
+
+        pedido.setEndereco(endereco);
 
         Set<ItemPedido> itens = new HashSet<>();
 
@@ -135,13 +145,27 @@ public class PedidoService {
                 pedido.getUsuario().getEmail()
             );
 
+
+        Endereco endereco = pedido.getEndereco();
+
+        EnderecoDTO enderecoDTO = new EnderecoDTO(
+            endereco.getId(),
+            endereco.getCep(),
+            endereco.getNumero(),
+            endereco.getComplemento(),
+            endereco.getBairro(),
+            endereco.getCidade(),
+            endereco.getEstado()
+        );
+
         return new PedidoDTO(
                 pedido.getId(),
                 pedido.getDataPedido(),
                 pedido.getValorTotal(),
                 pedido.getStatus(),
                 itens,
-                usuarioDTO
+                usuarioDTO,
+                enderecoDTO
             );
     }
 

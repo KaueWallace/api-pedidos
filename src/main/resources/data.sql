@@ -28,7 +28,8 @@ INSERT INTO endereco (
     complemento,
     bairro,
     cidade,
-    estado
+    estado,
+    usuario_id
 )
 VALUES
 (
@@ -37,7 +38,8 @@ VALUES
     'Próximo à praça',
     'Centro',
     'Itacoatiara',
-    'AM'
+    'AM',
+    1
 );
 
 INSERT INTO endereco (
@@ -46,7 +48,8 @@ INSERT INTO endereco (
     complemento,
     bairro,
     cidade,
-    estado
+    estado,
+    usuario_id
 )
 VALUES
 (
@@ -55,7 +58,8 @@ VALUES
     'Sala 202',
     'Chapada',
     'Manaus',
-    'AM'
+    'AM',
+    1
 );
 
 INSERT INTO endereco (
@@ -64,7 +68,8 @@ INSERT INTO endereco (
     complemento,
     bairro,
     cidade,
-    estado
+    estado,
+    usuario_id
 )
 VALUES
 (
@@ -73,5 +78,6 @@ VALUES
     'Apto 1203',
     'Bela Vista',
     'São Paulo',
-    'SP'
+    'SP',
+    1
 );

@@ -44,4 +44,8 @@ public class Pedido {
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "endereco_id")
+    private Endereco endereco;
 }

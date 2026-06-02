@@ -11,6 +11,7 @@ public record PedidoDTO(
     Double valorTotal,
     EstadoPedido status,
     Set<ItemPedidoDTO> itens,
-    UsuarioResumoDTO usuario
+    UsuarioResumoDTO usuario,
+    EnderecoDTO endereco
 ) 
 {}
