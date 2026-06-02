@@ -68,4 +68,11 @@ public class PedidoController {
         return ResponseEntity.ok(service.atualizarStatus(id, dto));
     }
 
+    @PatchMapping("/meus/{id}/cancelar")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<String> cancelar(@PathVariable Long id){
+        service.cancelarPedido(id);
+        return ResponseEntity.ok("Pedido cancelado com sucesso");
+    }
+
 }

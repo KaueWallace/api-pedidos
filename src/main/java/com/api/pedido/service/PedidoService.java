@@ -81,7 +81,8 @@ public class PedidoService {
         pedido.setDataPedido(LocalDateTime.now());
         pedido.setStatus(EstadoPedido.PENDENTE);
 
-        Endereco endereco = enderecoRepository.findByIdAndUsuario(dto.enderecoId(), usuario).orElseThrow(() -> new RuntimeException("Endereço não encontrado!"));
+        Endereco endereco = enderecoRepository.findByIdAndUsuario(dto.enderecoId(), usuario)
+                .orElseThrow(() -> new RuntimeException("Endereço não encontrado!"));
 
         pedido.setEndereco(endereco);
 
@@ -92,6 +93,14 @@ public class PedidoService {
         for (ItemPedidoRequestDTO itemDTO : dto.itens()) {
             Produto produto = produtoRepository.findById(itemDTO.produtoId())
                     .orElseThrow(() -> new RuntimeException("Produto não encontrado!"));
+
+            if (itemDTO.quantidade() > produto.getEstoque()) {
+                throw new RuntimeException(
+                        "Estoque insuficiente para o produto: "
+                                + produto.getNome());
+            }
+
+            produto.setEstoque(produto.getEstoque() - itemDTO.quantidade());
 
             ItemPedido item = new ItemPedido(
                     pedido,
@@ -130,6 +139,31 @@ public class PedidoService {
         return converterDTO(pedido);
     }
 
+    public void cancelarPedido(Long id) {
+        Usuario usuario = getUsuarioLogado();
+
+        Pedido pedido = pedidoRepository.findByIdAndUsuario(id, usuario)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        if (pedido.getStatus() != EstadoPedido.PENDENTE) {
+            throw new RuntimeException("Apenas pedidos pendentes podem ser cancelados");
+        }
+
+        for (ItemPedido item : pedido.getItens()) {
+
+            Produto produto = item.getProduto();
+
+            produto.setEstoque(produto.getEstoque() + item.getQuantidade());
+
+            produtoRepository.save(produto);
+        }
+
+        pedido.setStatus(EstadoPedido.CANCELADO);
+
+        pedidoRepository.save(pedido);
+
+    }
+
     private PedidoDTO converterDTO(Pedido pedido) {
         Set<ItemPedidoDTO> itens = pedido.getItens().stream()
                 .map(item -> new ItemPedidoDTO(
@@ -142,21 +176,18 @@ public class PedidoService {
         UsuarioResumoDTO usuarioDTO = new UsuarioResumoDTO(
                 pedido.getUsuario().getId(),
                 pedido.getUsuario().getNome(),
-                pedido.getUsuario().getEmail()
-            );
-
+                pedido.getUsuario().getEmail());
 
         Endereco endereco = pedido.getEndereco();
 
         EnderecoDTO enderecoDTO = new EnderecoDTO(
-            endereco.getId(),
-            endereco.getCep(),
-            endereco.getNumero(),
-            endereco.getComplemento(),
-            endereco.getBairro(),
-            endereco.getCidade(),
-            endereco.getEstado()
-        );
+                endereco.getId(),
+                endereco.getCep(),
+                endereco.getNumero(),
+                endereco.getComplemento(),
+                endereco.getBairro(),
+                endereco.getCidade(),
+                endereco.getEstado());
 
         return new PedidoDTO(
                 pedido.getId(),
@@ -165,8 +196,7 @@ public class PedidoService {
                 pedido.getStatus(),
                 itens,
                 usuarioDTO,
-                enderecoDTO
-            );
+                enderecoDTO);
     }
 
     private Usuario getUsuarioLogado() {
