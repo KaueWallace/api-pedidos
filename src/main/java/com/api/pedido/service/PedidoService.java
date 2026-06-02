@@ -20,6 +20,7 @@ import com.api.pedido.dtos.ItemPedidoDTO;
 import com.api.pedido.dtos.ItemPedidoRequestDTO;
 import com.api.pedido.dtos.PedidoDTO;
 import com.api.pedido.dtos.PedidoRequestDTO;
+import com.api.pedido.dtos.UsuarioResumoDTO;
 import com.api.pedido.repository.PedidoRepository;
 import com.api.pedido.repository.ProdutoRepository;
 
@@ -128,12 +129,20 @@ public class PedidoService {
                         item.getSubTotal()))
                 .collect(Collectors.toSet());
 
+        UsuarioResumoDTO usuarioDTO = new UsuarioResumoDTO(
+                pedido.getUsuario().getId(),
+                pedido.getUsuario().getNome(),
+                pedido.getUsuario().getEmail()
+            );
+
         return new PedidoDTO(
                 pedido.getId(),
                 pedido.getDataPedido(),
                 pedido.getValorTotal(),
                 pedido.getStatus(),
-                itens);
+                itens,
+                usuarioDTO
+            );
     }
 
     private Usuario getUsuarioLogado() {
