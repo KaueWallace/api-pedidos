@@ -3,6 +3,7 @@ package com.api.pedido.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,32 +27,32 @@ public class ProdutoController {
 
     @GetMapping
     @PreAuthorize("hasRole('CLIENTE')")
-    public List<ProdutoDTO> listar(){
-        return service.listar();
+    public ResponseEntity<List<ProdutoDTO>> listar(){
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('CLIENTE')")
-    public ProdutoDTO buscarPorId(@PathVariable Long id){
-        return service.buscarPorId(id);
+    public ResponseEntity<ProdutoDTO> buscarPorId(@PathVariable Long id){
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @GetMapping("/buscar")
     @PreAuthorize("hasRole('CLIENTE')")
-    public List<ProdutoDTO> buscar(@RequestParam String nome){
-        return service.buscarPorNome(nome);
+    public ResponseEntity<List<ProdutoDTO>> buscar(@RequestParam String nome){
+        return ResponseEntity.ok(service.buscarPorNome(nome));
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ProdutoDTO salvar(@RequestBody Produto produto){
-        return service.salvar(produto);
+    public ResponseEntity<ProdutoDTO> salvar(@RequestBody Produto produto){
+        return ResponseEntity.ok(service.salvar(produto));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ProdutoDTO editar(@PathVariable Long id, @RequestBody Produto produtoAtualizado){
-        return service.editar(id, produtoAtualizado);
+    public ResponseEntity<ProdutoDTO> editar(@PathVariable Long id, @RequestBody Produto produtoAtualizado){
+        return ResponseEntity.ok(service.editar(id, produtoAtualizado));
     }
 
     @DeleteMapping("/{id}")

@@ -3,6 +3,7 @@ package com.api.pedido.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,32 +28,32 @@ public class PedidoController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public List<PedidoDTO> listar() {
-        return service.listar();
+    public ResponseEntity<List<PedidoDTO>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/meus")
     @PreAuthorize("hasRole('CLIENTE')")
-    public List<PedidoDTO> listarMeusPedidos() {
-        return service.listarMeusPedidos();
+    public ResponseEntity<List<PedidoDTO>> listarMeusPedidos() {
+        return ResponseEntity.ok(service.listarMeusPedidos());
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public PedidoDTO buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id);
+    public ResponseEntity<PedidoDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @GetMapping("/meu/{id}")
     @PreAuthorize("hasRole('CLIENTE')")
-    public PedidoDTO buscarMeuPedido(@PathVariable Long id) {
-        return service.buscarMeuPedidoPorId(id);
+    public ResponseEntity<PedidoDTO> buscarMeuPedido(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarMeuPedidoPorId(id));
     }
 
     @PostMapping
     @PreAuthorize("hasRole('CLIENTE')")
-    public PedidoDTO salvar(@RequestBody PedidoRequestDTO dto) {
-        return service.salvar(dto);
+    public ResponseEntity<PedidoDTO> salvar(@RequestBody PedidoRequestDTO dto) {
+        return ResponseEntity.ok(service.salvar(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -63,8 +64,8 @@ public class PedidoController {
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
-    public PedidoDTO atualizarStatus(@PathVariable Long id, @RequestBody AtualizarStatusDTO dto) {
-        return service.atualizarStatus(id, dto);
+    public ResponseEntity<PedidoDTO> atualizarStatus(@PathVariable Long id, @RequestBody AtualizarStatusDTO dto) {
+        return ResponseEntity.ok(service.atualizarStatus(id, dto));
     }
 
 }

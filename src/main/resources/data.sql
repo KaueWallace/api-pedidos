@@ -19,3 +19,59 @@ VALUES ('Teclado Mecânico', 250.0, 5);
 
 INSERT INTO produto (nome, preco, estoque)
 VALUES ('Monitor', 900.0, 3);
+
+-- Endereços
+
+INSERT INTO endereco (
+    cep,
+    numero,
+    complemento,
+    bairro,
+    cidade,
+    estado
+)
+VALUES
+(
+    '69100-000',
+    '123',
+    'Próximo à praça',
+    'Centro',
+    'Itacoatiara',
+    'AM'
+);
+
+INSERT INTO endereco (
+    cep,
+    numero,
+    complemento,
+    bairro,
+    cidade,
+    estado
+)
+VALUES
+(
+    '69050-010',
+    '500',
+    'Sala 202',
+    'Chapada',
+    'Manaus',
+    'AM'
+);
+
+INSERT INTO endereco (
+    cep,
+    numero,
+    complemento,
+    bairro,
+    cidade,
+    estado
+)
+VALUES
+(
+    '01310-100',
+    '1500',
+    'Apto 1203',
+    'Bela Vista',
+    'São Paulo',
+    'SP'
+);
