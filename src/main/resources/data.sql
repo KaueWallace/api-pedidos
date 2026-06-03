@@ -11,14 +11,14 @@ VALUES
 
 -- PRODUTOS
 
-INSERT INTO produto (nome, preco, estoque)
-VALUES ('Mouse Gamer', 120.0, 10);
+INSERT INTO produto (nome, preco, estoque, imagem)
+VALUES ('Mouse Gamer', 120.0, 10, 'https://m.media-amazon.com/images/I/61C7blR0ZAL._AC_.jpg');
 
-INSERT INTO produto (nome, preco, estoque)
-VALUES ('Teclado Mecânico', 250.0, 5);
+INSERT INTO produto (nome, preco, estoque, imagem)
+VALUES ('Teclado Mecânico', 250.0, 5, 'https://cdn2.unrealengine.com/mechanical-keyboard-diagonal-4080x2295-d50ff434f19c.jpg');
 
-INSERT INTO produto (nome, preco, estoque)
-VALUES ('Monitor', 900.0, 3);
+INSERT INTO produto (nome, preco, estoque, imagem)
+VALUES ('Monitor', 900.0, 3, 'https://assets.rockpapershotgun.com/images/2018/02/BenQ-EL2870U-face-on.jpg');
 
 -- Endereços
 

@@ -4,5 +4,6 @@ public record ProdutoDTO(
     Long id,
     String nome,
     Double preco,
-    Integer estoque
+    Integer estoque,
+    String imagem
 ) {}

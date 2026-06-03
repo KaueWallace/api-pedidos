@@ -30,6 +30,8 @@ public class Produto {
 
     private Integer estoque;
 
+    private String imagem;
+
     @OneToMany(mappedBy = "id.produto")
     private Set<ItemPedido> itens = new HashSet<>();
 

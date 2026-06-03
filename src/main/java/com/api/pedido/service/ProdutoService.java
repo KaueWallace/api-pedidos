@@ -65,7 +65,8 @@ public class ProdutoService {
             produto.getId(),
             produto.getNome(),
             produto.getPreco(),
-            produto.getEstoque()
+            produto.getEstoque(),
+            produto.getImagem()
         );
     }
 }
