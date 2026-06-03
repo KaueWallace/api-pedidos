@@ -11,4 +11,5 @@ import com.api.pedido.domain.Usuario;
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     List<Pedido> findByUsuario(Usuario usuario);
     Optional<Pedido> findByIdAndUsuario(Long id, Usuario usuario);
+    boolean existsByEnderecoId(Long enderecoId);
 }

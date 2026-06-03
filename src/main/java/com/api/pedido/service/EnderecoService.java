@@ -1,5 +1,6 @@
 package com.api.pedido.service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,10 @@ import com.api.pedido.dtos.EnderecoCadastroDTO;
 import com.api.pedido.dtos.EnderecoDTO;
 import com.api.pedido.dtos.UsuarioResumoDTO;
 import com.api.pedido.repository.EnderecoRepository;
+import com.api.pedido.repository.PedidoRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class EnderecoService {
@@ -19,7 +24,10 @@ public class EnderecoService {
     @Autowired
     private EnderecoRepository repository;
 
-    public List<EnderecoDTO> listar(){
+    @Autowired
+    private PedidoRepository pedidoRepository;
+
+    public List<EnderecoDTO> listar() {
         List<Endereco> enderecos = repository.findAll();
 
         List<EnderecoDTO> dto = enderecos.stream().map(this::converterDTO).toList();
@@ -27,15 +35,13 @@ public class EnderecoService {
         return dto;
     }
 
-
-    public EnderecoDTO buscarPorID(Long id){
+    public EnderecoDTO buscarPorID(Long id) {
         Endereco endereco = repository.findById(id).orElseThrow();
 
         return converterDTO(endereco);
     }
 
-
-    public EnderecoDTO cadastrar(EnderecoCadastroDTO dto){
+    public EnderecoDTO cadastrar(EnderecoCadastroDTO dto) {
         Endereco endereco = new Endereco();
 
         Usuario usuario = getUsuarioLogado();
@@ -53,8 +59,7 @@ public class EnderecoService {
         return converterDTO(salvo);
     }
 
-
-    public EnderecoDTO editar(Long id, EnderecoCadastroDTO enderecoDTO){
+    public EnderecoDTO editar(Long id, EnderecoCadastroDTO enderecoDTO) {
         Endereco endereco = repository.findById(id).orElseThrow();
 
         endereco.setCep(enderecoDTO.cep());
@@ -70,27 +75,46 @@ public class EnderecoService {
 
     }
 
-    private EnderecoDTO converterDTO(Endereco endereco){
+    @Transactional
+    public void excluir(Long id)  {
+
+        Usuario usuarioLogado = getUsuarioLogado();
+
+        Endereco endereco = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Endereço não encontrado"));
+
+        boolean possuiPedidos = pedidoRepository.existsByEnderecoId(id);
+
+        if (possuiPedidos) {
+            throw new RuntimeException(
+                    "Não é possível excluir um endereço vinculado a pedidos");
+        }
+
+        if (!endereco.getUsuario().getId().equals(usuarioLogado.getId())) {
+            throw new RuntimeException("Você não pode excluir este endereço");
+        }
+
+        repository.delete(endereco);
+    }
+
+    private EnderecoDTO converterDTO(Endereco endereco) {
 
         UsuarioResumoDTO usuario = new UsuarioResumoDTO(
-            endereco.getUsuario().getId(),
-            endereco.getUsuario().getNome(),
-            endereco.getUsuario().getEmail()
-        );
+                endereco.getUsuario().getId(),
+                endereco.getUsuario().getNome(),
+                endereco.getUsuario().getEmail());
 
         EnderecoDTO dto = new EnderecoDTO(
-            endereco.getId(),
-            endereco.getCep(),
-            endereco.getNumero(),
-            endereco.getComplemento(),
-            endereco.getBairro(),
-            endereco.getCidade(),
-            endereco.getEstado()
-        );
+                endereco.getId(),
+                endereco.getCep(),
+                endereco.getNumero(),
+                endereco.getComplemento(),
+                endereco.getBairro(),
+                endereco.getCidade(),
+                endereco.getEstado());
 
         return dto;
     }
-
 
     private Usuario getUsuarioLogado() {
         return (Usuario) SecurityContextHolder
