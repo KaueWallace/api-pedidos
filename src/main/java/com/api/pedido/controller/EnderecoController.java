@@ -35,6 +35,15 @@ public class EnderecoController {
         return ResponseEntity.ok(service.listar());
     }
 
+    @GetMapping("/meus")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<List<EnderecoDTO>> listarMeusEnderecos() {
+
+        return ResponseEntity.ok(
+            service.listarMeusEnderecos());
+
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<EnderecoDTO> buscarPorId(@PathVariable Long id) {

@@ -35,6 +35,18 @@ public class EnderecoService {
         return dto;
     }
 
+    @Transactional
+    public List<EnderecoDTO> listarMeusEnderecos() {
+
+        Usuario usuario = getUsuarioLogado();
+
+        return repository
+                .findByUsuarioId(usuario.getId())
+                .stream()
+                .map(this::converterDTO)
+                .toList();
+    }
+
     public EnderecoDTO buscarPorID(Long id) {
         Endereco endereco = repository.findById(id).orElseThrow();
 
@@ -76,7 +88,7 @@ public class EnderecoService {
     }
 
     @Transactional
-    public void excluir(Long id)  {
+    public void excluir(Long id) {
 
         Usuario usuarioLogado = getUsuarioLogado();
 
