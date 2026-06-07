@@ -32,186 +32,194 @@ import jakarta.transaction.Transactional;
 @Service
 public class PedidoService {
 
-    @Autowired
-    private PedidoRepository pedidoRepository;
+        @Autowired
+        private PedidoRepository pedidoRepository;
 
-    @Autowired
-    private ProdutoRepository produtoRepository;
+        @Autowired
+        private ProdutoRepository produtoRepository;
 
-    @Autowired
-    private EnderecoRepository enderecoRepository;
+        @Autowired
+        private EnderecoRepository enderecoRepository;
 
-    @Autowired
-    private CarrinhoService carrinhoService;
+        @Autowired
+        private CarrinhoService carrinhoService;
 
-    public List<PedidoDTO> listar() {
-        List<Pedido> lista = pedidoRepository.findAll();
+        public List<PedidoDTO> listar() {
+                List<Pedido> lista = pedidoRepository.findAll();
 
-        return lista.stream().map(this::converterDTO)
-                .toList();
-    }
-
-    public List<PedidoDTO> listarMeusPedidos() {
-        Usuario usuario = getUsuarioLogado();
-
-        return pedidoRepository.findByUsuario(usuario)
-                .stream()
-                .map(this::converterDTO)
-                .toList();
-    }
-
-    public PedidoDTO buscarPorId(Long id) {
-        Pedido pedido = pedidoRepository.findById(id).orElseThrow();
-
-        return converterDTO(pedido);
-    }
-
-    public PedidoDTO buscarMeuPedidoPorId(Long id) {
-
-        Usuario usuario = getUsuarioLogado();
-
-        Pedido pedido = pedidoRepository
-                .findByIdAndUsuario(id, usuario)
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
-
-        return converterDTO(pedido);
-    }
-
-    @Transactional
-    public PedidoDTO salvar(PedidoRequestDTO dto) {
-        Usuario usuario = getUsuarioLogado();
-        Pedido pedido = new Pedido();
-
-        pedido.setUsuario(usuario);
-
-        pedido.setDataPedido(LocalDateTime.now());
-        pedido.setStatus(EstadoPedido.PENDENTE);
-
-        Endereco endereco = enderecoRepository.findByIdAndUsuario(dto.enderecoId(), usuario)
-                .orElseThrow(() -> new RuntimeException("Endereço não encontrado!"));
-
-        pedido.setEndereco(endereco);
-
-        Set<ItemPedido> itens = new HashSet<>();
-
-        Double total = 0.0;
-
-        for (ItemPedidoRequestDTO itemDTO : dto.itens()) {
-            Produto produto = produtoRepository.findById(itemDTO.produtoId())
-                    .orElseThrow(() -> new RuntimeException("Produto não encontrado!"));
-
-            if (itemDTO.quantidade() > produto.getEstoque()) {
-                throw new RuntimeException(
-                        "Estoque insuficiente para o produto: "
-                                + produto.getNome());
-            }
-
-            produto.setEstoque(produto.getEstoque() - itemDTO.quantidade());
-
-            ItemPedido item = new ItemPedido(
-                    pedido,
-                    produto,
-                    itemDTO.quantidade(),
-                    produto.getPreco());
-
-            total += item.getSubTotal();
-
-            itens.add(item);
+                return lista.stream().map(this::converterDTO)
+                                .toList();
         }
 
-        pedido.setItens(itens);
-        pedido.setValorTotal(total);
+        public List<PedidoDTO> listarMeusPedidos() {
+                Usuario usuario = getUsuarioLogado();
 
-        pedidoRepository.save(pedido);
-
-        carrinhoService.limparCarrinho();
-
-        return converterDTO(pedido);
-    }
-
-    public void deletar(Long id) {
-        pedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
-
-        pedidoRepository.deleteById(id);
-    }
-
-    public PedidoDTO atualizarStatus(Long id, AtualizarStatusDTO dto) {
-        Pedido pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
-
-        pedido.setStatus(dto.status());
-
-        pedidoRepository.save(pedido);
-
-        return converterDTO(pedido);
-    }
-
-    public void cancelarPedido(Long id) {
-        Usuario usuario = getUsuarioLogado();
-
-        Pedido pedido = pedidoRepository.findByIdAndUsuario(id, usuario)
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
-
-        if (pedido.getStatus() != EstadoPedido.PENDENTE) {
-            throw new RuntimeException("Apenas pedidos pendentes podem ser cancelados");
+                return pedidoRepository.findByUsuario(usuario)
+                                .stream()
+                                .map(this::converterDTO)
+                                .toList();
         }
 
-        for (ItemPedido item : pedido.getItens()) {
+        public PedidoDTO buscarPorId(Long id) {
+                Pedido pedido = pedidoRepository.findById(id).orElseThrow();
 
-            Produto produto = item.getProduto();
-
-            produto.setEstoque(produto.getEstoque() + item.getQuantidade());
-
-            produtoRepository.save(produto);
+                return converterDTO(pedido);
         }
 
-        pedido.setStatus(EstadoPedido.CANCELADO);
+        public PedidoDTO buscarMeuPedidoPorId(Long id) {
 
-        pedidoRepository.save(pedido);
+                Usuario usuario = getUsuarioLogado();
 
-    }
+                Pedido pedido = pedidoRepository
+                                .findByIdAndUsuario(id, usuario)
+                                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
-    private PedidoDTO converterDTO(Pedido pedido) {
-        Set<ItemPedidoDTO> itens = pedido.getItens().stream()
-                .map(item -> new ItemPedidoDTO(
-                        item.getProduto().getNome(),
-                        item.getQuantidade(),
-                        item.getPrecoUnitario(),
-                        item.getSubTotal()))
-                .collect(Collectors.toSet());
+                return converterDTO(pedido);
+        }
 
-        UsuarioResumoDTO usuarioDTO = new UsuarioResumoDTO(
-                pedido.getUsuario().getId(),
-                pedido.getUsuario().getNome(),
-                pedido.getUsuario().getEmail());
+        public List<PedidoDTO> listarMeusPedidosPorStatus(EstadoPedido status) {
 
-        Endereco endereco = pedido.getEndereco();
+                Usuario usuario = getUsuarioLogado();
 
-        EnderecoDTO enderecoDTO = new EnderecoDTO(
-                endereco.getId(),
-                endereco.getCep(),
-                endereco.getNumero(),
-                endereco.getComplemento(),
-                endereco.getBairro(),
-                endereco.getCidade(),
-                endereco.getEstado());
+                return pedidoRepository.findByUsuarioAndStatus(usuario, status)
+                        .stream().map(this::converterDTO).toList();
+        }
 
-        return new PedidoDTO(
-                pedido.getId(),
-                pedido.getDataPedido(),
-                pedido.getValorTotal(),
-                pedido.getStatus(),
-                itens,
-                usuarioDTO,
-                enderecoDTO);
-    }
+        @Transactional
+        public PedidoDTO salvar(PedidoRequestDTO dto) {
+                Usuario usuario = getUsuarioLogado();
+                Pedido pedido = new Pedido();
 
-    private Usuario getUsuarioLogado() {
-        return (Usuario) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-    }
+                pedido.setUsuario(usuario);
+
+                pedido.setDataPedido(LocalDateTime.now());
+                pedido.setStatus(EstadoPedido.PENDENTE);
+
+                Endereco endereco = enderecoRepository.findByIdAndUsuario(dto.enderecoId(), usuario)
+                                .orElseThrow(() -> new RuntimeException("Endereço não encontrado!"));
+
+                pedido.setEndereco(endereco);
+
+                Set<ItemPedido> itens = new HashSet<>();
+
+                Double total = 0.0;
+
+                for (ItemPedidoRequestDTO itemDTO : dto.itens()) {
+                        Produto produto = produtoRepository.findById(itemDTO.produtoId())
+                                        .orElseThrow(() -> new RuntimeException("Produto não encontrado!"));
+
+                        if (itemDTO.quantidade() > produto.getEstoque()) {
+                                throw new RuntimeException(
+                                                "Estoque insuficiente para o produto: "
+                                                                + produto.getNome());
+                        }
+
+                        produto.setEstoque(produto.getEstoque() - itemDTO.quantidade());
+
+                        ItemPedido item = new ItemPedido(
+                                        pedido,
+                                        produto,
+                                        itemDTO.quantidade(),
+                                        produto.getPreco());
+
+                        total += item.getSubTotal();
+
+                        itens.add(item);
+                }
+
+                pedido.setItens(itens);
+                pedido.setValorTotal(total);
+
+                pedidoRepository.save(pedido);
+
+                carrinhoService.limparCarrinho();
+
+                return converterDTO(pedido);
+        }
+
+        public void deletar(Long id) {
+                pedidoRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+                pedidoRepository.deleteById(id);
+        }
+
+        public PedidoDTO atualizarStatus(Long id, AtualizarStatusDTO dto) {
+                Pedido pedido = pedidoRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+                pedido.setStatus(dto.status());
+
+                pedidoRepository.save(pedido);
+
+                return converterDTO(pedido);
+        }
+
+        public void cancelarPedido(Long id) {
+                Usuario usuario = getUsuarioLogado();
+
+                Pedido pedido = pedidoRepository.findByIdAndUsuario(id, usuario)
+                                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+                if (pedido.getStatus() != EstadoPedido.PENDENTE) {
+                        throw new RuntimeException("Apenas pedidos pendentes podem ser cancelados");
+                }
+
+                for (ItemPedido item : pedido.getItens()) {
+
+                        Produto produto = item.getProduto();
+
+                        produto.setEstoque(produto.getEstoque() + item.getQuantidade());
+
+                        produtoRepository.save(produto);
+                }
+
+                pedido.setStatus(EstadoPedido.CANCELADO);
+
+                pedidoRepository.save(pedido);
+
+        }
+
+        private PedidoDTO converterDTO(Pedido pedido) {
+                Set<ItemPedidoDTO> itens = pedido.getItens().stream()
+                                .map(item -> new ItemPedidoDTO(
+                                                item.getProduto().getNome(),
+                                                item.getQuantidade(),
+                                                item.getPrecoUnitario(),
+                                                item.getSubTotal()))
+                                .collect(Collectors.toSet());
+
+                UsuarioResumoDTO usuarioDTO = new UsuarioResumoDTO(
+                                pedido.getUsuario().getId(),
+                                pedido.getUsuario().getNome(),
+                                pedido.getUsuario().getEmail());
+
+                Endereco endereco = pedido.getEndereco();
+
+                EnderecoDTO enderecoDTO = new EnderecoDTO(
+                                endereco.getId(),
+                                endereco.getCep(),
+                                endereco.getNumero(),
+                                endereco.getComplemento(),
+                                endereco.getBairro(),
+                                endereco.getCidade(),
+                                endereco.getEstado());
+
+                return new PedidoDTO(
+                                pedido.getId(),
+                                pedido.getDataPedido(),
+                                pedido.getValorTotal(),
+                                pedido.getStatus(),
+                                itens,
+                                usuarioDTO,
+                                enderecoDTO);
+        }
+
+        private Usuario getUsuarioLogado() {
+                return (Usuario) SecurityContextHolder
+                                .getContext()
+                                .getAuthentication()
+                                .getPrincipal();
+        }
 
 }

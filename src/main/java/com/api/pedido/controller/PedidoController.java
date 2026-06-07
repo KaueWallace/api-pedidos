@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.pedido.domain.enums.EstadoPedido;
 import com.api.pedido.dtos.AtualizarStatusDTO;
 import com.api.pedido.dtos.PedidoDTO;
 import com.api.pedido.dtos.PedidoRequestDTO;
@@ -34,8 +36,15 @@ public class PedidoController {
 
     @GetMapping("/meus")
     @PreAuthorize("hasRole('CLIENTE')")
-    public ResponseEntity<List<PedidoDTO>> listarMeusPedidos() {
-        return ResponseEntity.ok(service.listarMeusPedidos());
+    public ResponseEntity<List<PedidoDTO>> listarMeusPedidos(
+            @RequestParam(required = false) EstadoPedido status) {
+
+        if (status != null) {
+            return ResponseEntity.ok(service.listarMeusPedidosPorStatus(status));
+        }
+
+        return ResponseEntity.ok(
+                service.listarMeusPedidos());
     }
 
     @GetMapping("/{id}")
