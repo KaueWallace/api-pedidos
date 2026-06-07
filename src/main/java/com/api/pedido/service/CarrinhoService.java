@@ -64,6 +64,12 @@ public class CarrinhoService {
                 .orElseThrow(() -> new RuntimeException(
                         "Produto não encontrado"));
 
+        if (dto.quantidade() > produto.getEstoque()) {
+            throw new RuntimeException(
+                    "Estoque insuficiente. Disponível: "
+                            + produto.getEstoque());
+        }
+
         Optional<ItemCarrinho> itemExistente = itemCarrinhoRepository
                 .findByIdCarrinhoAndIdProduto(
                         carrinho,
@@ -73,9 +79,10 @@ public class CarrinhoService {
 
             ItemCarrinho item = itemExistente.get();
 
-            item.setQuantidade(
-                    item.getQuantidade()
-                            + dto.quantidade());
+            Integer novaQuantidade = item.getQuantidade()
+                    + dto.quantidade();
+
+            item.setQuantidade(novaQuantidade);
 
             itemCarrinhoRepository.save(item);
 
