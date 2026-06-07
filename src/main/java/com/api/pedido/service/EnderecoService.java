@@ -1,6 +1,5 @@
 package com.api.pedido.service;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import com.api.pedido.domain.Endereco;
 import com.api.pedido.domain.Usuario;
 import com.api.pedido.dtos.EnderecoCadastroDTO;
 import com.api.pedido.dtos.EnderecoDTO;
-import com.api.pedido.dtos.UsuarioResumoDTO;
 import com.api.pedido.repository.EnderecoRepository;
 import com.api.pedido.repository.PedidoRepository;
 
@@ -110,11 +108,6 @@ public class EnderecoService {
     }
 
     private EnderecoDTO converterDTO(Endereco endereco) {
-
-        UsuarioResumoDTO usuario = new UsuarioResumoDTO(
-                endereco.getUsuario().getId(),
-                endereco.getUsuario().getNome(),
-                endereco.getUsuario().getEmail());
 
         EnderecoDTO dto = new EnderecoDTO(
                 endereco.getId(),

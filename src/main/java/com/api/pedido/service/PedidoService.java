@@ -27,6 +27,8 @@ import com.api.pedido.repository.EnderecoRepository;
 import com.api.pedido.repository.PedidoRepository;
 import com.api.pedido.repository.ProdutoRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class PedidoService {
 
@@ -38,6 +40,9 @@ public class PedidoService {
 
     @Autowired
     private EnderecoRepository enderecoRepository;
+
+    @Autowired
+    private CarrinhoService carrinhoService;
 
     public List<PedidoDTO> listar() {
         List<Pedido> lista = pedidoRepository.findAll();
@@ -72,6 +77,7 @@ public class PedidoService {
         return converterDTO(pedido);
     }
 
+    @Transactional
     public PedidoDTO salvar(PedidoRequestDTO dto) {
         Usuario usuario = getUsuarioLogado();
         Pedido pedido = new Pedido();
@@ -117,6 +123,8 @@ public class PedidoService {
         pedido.setValorTotal(total);
 
         pedidoRepository.save(pedido);
+
+        carrinhoService.limparCarrinho();
 
         return converterDTO(pedido);
     }
