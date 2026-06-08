@@ -30,8 +30,18 @@ public class PedidoController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<PedidoDTO>> listar() {
-        return ResponseEntity.ok(service.listar());
+    public ResponseEntity<List<PedidoDTO>> listarTodos(
+            @RequestParam(required = false) EstadoPedido status) {
+
+        if (status != null) {
+            return ResponseEntity.ok(
+                    service
+                            .listarTodosPedidosPorStatus(
+                                    status));
+        }
+
+        return ResponseEntity.ok(
+                service.listar());
     }
 
     @GetMapping("/meus")
@@ -79,7 +89,7 @@ public class PedidoController {
 
     @PatchMapping("/meus/{id}/cancelar")
     @PreAuthorize("hasRole('CLIENTE')")
-    public ResponseEntity<String> cancelar(@PathVariable Long id){
+    public ResponseEntity<String> cancelar(@PathVariable Long id) {
         service.cancelarPedido(id);
         return ResponseEntity.ok("Pedido cancelado com sucesso");
     }

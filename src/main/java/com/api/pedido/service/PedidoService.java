@@ -82,7 +82,13 @@ public class PedidoService {
                 Usuario usuario = getUsuarioLogado();
 
                 return pedidoRepository.findByUsuarioAndStatus(usuario, status)
-                        .stream().map(this::converterDTO).toList();
+                                .stream().map(this::converterDTO).toList();
+        }
+
+        public List<PedidoDTO> listarTodosPedidosPorStatus(EstadoPedido status) {
+
+                return pedidoRepository.findByStatus(status).stream().map(this::converterDTO).toList();
+                
         }
 
         @Transactional
