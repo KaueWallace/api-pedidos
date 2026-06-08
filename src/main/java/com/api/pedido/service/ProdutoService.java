@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.api.pedido.domain.Produto;
 import com.api.pedido.dtos.ProdutoDTO;
+import com.api.pedido.dtos.ProdutoRequestDTO;
 import com.api.pedido.repository.ProdutoRepository;
 
 @Service
@@ -38,18 +39,26 @@ public class ProdutoService {
             .collect(Collectors.toList());
     }
 
-    public ProdutoDTO salvar(Produto produto) {
+    public ProdutoDTO salvar(ProdutoRequestDTO dto) {
+        Produto produto = new Produto();
+
+        produto.setNome(dto.nome());
+        produto.setEstoque(dto.estoque());
+        produto.setPreco(dto.preco());
+        produto.setImagem(dto.imagem());
+
         Produto salvo = repository.save(produto);
         return converterDTO(salvo);
     }
 
-    public ProdutoDTO editar(Long id, Produto produtoAtualizado) {
+    public ProdutoDTO editar(Long id, ProdutoRequestDTO produtoAtualizado) {
 
         Produto produto = repository.findById(id).orElseThrow();
 
-        produto.setNome(produtoAtualizado.getNome());
-        produto.setPreco(produtoAtualizado.getPreco());
-        produto.setEstoque(produtoAtualizado.getEstoque());
+        produto.setNome(produtoAtualizado.nome());
+        produto.setPreco(produtoAtualizado.preco());
+        produto.setEstoque(produtoAtualizado.estoque());
+        produto.setImagem(produtoAtualizado.imagem());
 
         Produto salvo = repository.save(produto);
 

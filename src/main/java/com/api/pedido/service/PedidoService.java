@@ -155,6 +155,7 @@ public class PedidoService {
                 return converterDTO(pedido);
         }
 
+        @Transactional
         public void cancelarPedido(Long id) {
                 Usuario usuario = getUsuarioLogado();
 

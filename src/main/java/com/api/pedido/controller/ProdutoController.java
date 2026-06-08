@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.api.pedido.domain.Produto;
 import com.api.pedido.dtos.ProdutoDTO;
+import com.api.pedido.dtos.ProdutoRequestDTO;
 import com.api.pedido.service.ProdutoService;
 
 @RestController
@@ -45,13 +46,13 @@ public class ProdutoController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProdutoDTO> salvar(@RequestBody Produto produto){
+    public ResponseEntity<ProdutoDTO> salvar(@RequestBody ProdutoRequestDTO produto){
         return ResponseEntity.ok(service.salvar(produto));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProdutoDTO> editar(@PathVariable Long id, @RequestBody Produto produtoAtualizado){
+    public ResponseEntity<ProdutoDTO> editar(@PathVariable Long id, @RequestBody ProdutoRequestDTO produtoAtualizado){
         return ResponseEntity.ok(service.editar(id, produtoAtualizado));
     }
 
