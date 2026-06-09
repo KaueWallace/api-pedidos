@@ -45,6 +45,19 @@ public class EnderecoService {
                 .map(this::converterDTO);
     }
 
+    public List<EnderecoDTO> listarTodosMeusEnderecos() {
+
+        Usuario usuario = getUsuarioLogado();
+
+        return repository
+                .findByUsuarioId(
+                        usuario.getId())
+                .stream()
+                .map(this::converterDTO)
+                .toList();
+
+    }
+
     public EnderecoDTO buscarPorID(Long id) {
         Endereco endereco = repository.findById(id).orElseThrow();
 

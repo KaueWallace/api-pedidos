@@ -1,6 +1,5 @@
 package com.api.pedido.controller;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,16 @@ public class EnderecoController {
     public ResponseEntity<Page<EnderecoDTO>> listarMeusEnderecos(Pageable pageable) {
 
         return ResponseEntity.ok(
-            service.listarMeusEnderecos(pageable));
+                service.listarMeusEnderecos(pageable));
+
+    }
+
+    @GetMapping("/meus/todos")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<List<EnderecoDTO>> listarTodosMeusEnderecos() {
+
+        return ResponseEntity.ok(
+                service.listarTodosMeusEnderecos());
 
     }
 
