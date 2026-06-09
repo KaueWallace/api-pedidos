@@ -43,7 +43,8 @@ public class Usuario implements UserDetails {
     private List<Endereco> enderecos;
 
 
-    public Usuario(String email, String senha, UserRole role){
+    public Usuario(String nome,String email, String senha, UserRole role){
+        this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.role = role;

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.pedido.domain.Usuario;
+import com.api.pedido.domain.enums.UserRole;
 import com.api.pedido.dtos.AuthenticationDTO;
 import com.api.pedido.dtos.LoginResponseDTO;
 import com.api.pedido.dtos.RegisterDTO;
@@ -53,7 +54,7 @@ public class AuthenticationController {
         if (this.repository.findByEmail(data.email()) != null) return ResponseEntity.badRequest().build();
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.senha());
-        Usuario novoUsuario = new Usuario(data.email(), encryptedPassword, data.role());
+        Usuario novoUsuario = new Usuario(data.nome() ,data.email(), encryptedPassword, UserRole.CLIENTE);
 
         this.repository.save(novoUsuario);
 

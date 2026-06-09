@@ -26,6 +26,7 @@ public class PedidoApplication {
 			if (repository.findByEmail("admin@email.com") == null) {
 
 				Usuario admin = new Usuario(
+						"admin",
 						"admin@email.com",
 						encoder.encode("admin123"),
 						UserRole.ADMIN);
@@ -38,6 +39,7 @@ public class PedidoApplication {
 			if (repository.findByEmail("cliente@email.com") == null) {
 
 				Usuario cliente = new Usuario(
+						"cliente",
 						"cliente@email.com",
 						encoder.encode("cliente123"),
 						UserRole.CLIENTE);
