@@ -3,6 +3,8 @@ package com.api.pedido.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -46,15 +48,15 @@ public class PedidoController {
 
     @GetMapping("/meus")
     @PreAuthorize("hasRole('CLIENTE')")
-    public ResponseEntity<List<PedidoDTO>> listarMeusPedidos(
-            @RequestParam(required = false) EstadoPedido status) {
+    public ResponseEntity<Page<PedidoDTO>> listarMeusPedidos(
+            @RequestParam(required = false) EstadoPedido status, Pageable pageable) {
 
         if (status != null) {
-            return ResponseEntity.ok(service.listarMeusPedidosPorStatus(status));
+            return ResponseEntity.ok(service.listarMeusPedidosPorStatus(status, pageable));
         }
 
         return ResponseEntity.ok(
-                service.listarMeusPedidos());
+                service.listarMeusPedidos(pageable));
     }
 
     @GetMapping("/{id}")

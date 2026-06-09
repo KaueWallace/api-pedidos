@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -51,13 +53,10 @@ public class PedidoService {
                                 .toList();
         }
 
-        public List<PedidoDTO> listarMeusPedidos() {
+        public Page<PedidoDTO> listarMeusPedidos(Pageable pageable) {
                 Usuario usuario = getUsuarioLogado();
 
-                return pedidoRepository.findByUsuario(usuario)
-                                .stream()
-                                .map(this::converterDTO)
-                                .toList();
+                return pedidoRepository.findByUsuario(usuario, pageable).map(this::converterDTO);
         }
 
         public PedidoDTO buscarPorId(Long id) {
@@ -77,12 +76,12 @@ public class PedidoService {
                 return converterDTO(pedido);
         }
 
-        public List<PedidoDTO> listarMeusPedidosPorStatus(EstadoPedido status) {
+        public Page<PedidoDTO> listarMeusPedidosPorStatus(EstadoPedido status, Pageable pageable) {
 
                 Usuario usuario = getUsuarioLogado();
 
-                return pedidoRepository.findByUsuarioAndStatus(usuario, status)
-                                .stream().map(this::converterDTO).toList();
+                return pedidoRepository.findByUsuarioAndStatus(usuario, status, pageable)
+                                .map(this::converterDTO);
         }
 
         public List<PedidoDTO> listarTodosPedidosPorStatus(EstadoPedido status) {
