@@ -4,6 +4,8 @@ package com.api.pedido.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,10 +38,10 @@ public class EnderecoController {
 
     @GetMapping("/meus")
     @PreAuthorize("hasRole('CLIENTE')")
-    public ResponseEntity<List<EnderecoDTO>> listarMeusEnderecos() {
+    public ResponseEntity<Page<EnderecoDTO>> listarMeusEnderecos(Pageable pageable) {
 
         return ResponseEntity.ok(
-            service.listarMeusEnderecos());
+            service.listarMeusEnderecos(pageable));
 
     }
 

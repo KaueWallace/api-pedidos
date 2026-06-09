@@ -3,6 +3,8 @@ package com.api.pedido.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -34,15 +36,13 @@ public class EnderecoService {
     }
 
     @Transactional
-    public List<EnderecoDTO> listarMeusEnderecos() {
+    public Page<EnderecoDTO> listarMeusEnderecos(Pageable pageable) {
 
         Usuario usuario = getUsuarioLogado();
 
         return repository
-                .findByUsuarioId(usuario.getId())
-                .stream()
-                .map(this::converterDTO)
-                .toList();
+                .findByUsuarioId(usuario.getId(), pageable)
+                .map(this::converterDTO);
     }
 
     public EnderecoDTO buscarPorID(Long id) {
