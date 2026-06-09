@@ -31,12 +31,9 @@ public class ProdutoService {
         return converterDTO(produto);
     }
 
-    public List<ProdutoDTO> buscarPorNome(String nome) {
-        List<Produto> lista = repository.findByNomeContainingIgnoreCase(nome);
-
-        return lista.stream()
-            .map(this::converterDTO)
-            .collect(Collectors.toList());
+    public Page<ProdutoDTO> buscarPorNome(String nome, Pageable pageable) {
+        return repository.findByNomeContainingIgnoreCase(nome, pageable)
+            .map(this::converterDTO);
     }
 
     public ProdutoDTO salvar(ProdutoRequestDTO dto) {

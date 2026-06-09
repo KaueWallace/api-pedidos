@@ -42,8 +42,8 @@ public class ProdutoController {
 
     @GetMapping("/buscar")
     @PreAuthorize("hasRole('CLIENTE')")
-    public ResponseEntity<List<ProdutoDTO>> buscar(@RequestParam String nome){
-        return ResponseEntity.ok(service.buscarPorNome(nome));
+    public ResponseEntity<Page<ProdutoDTO>> buscar(@RequestParam String nome, Pageable pageable){
+        return ResponseEntity.ok(service.buscarPorNome(nome, pageable));
     }
 
     @PostMapping
