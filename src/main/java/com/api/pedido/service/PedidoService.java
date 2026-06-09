@@ -46,11 +46,10 @@ public class PedidoService {
         @Autowired
         private CarrinhoService carrinhoService;
 
-        public List<PedidoDTO> listar() {
-                List<Pedido> lista = pedidoRepository.findAll();
+        public Page<PedidoDTO> listar(Pageable pageable) {
+                Page<Pedido> lista = pedidoRepository.findAll(pageable);
 
-                return lista.stream().map(this::converterDTO)
-                                .toList();
+                return lista.map(this::converterDTO);
         }
 
         public Page<PedidoDTO> listarMeusPedidos(Pageable pageable) {
@@ -84,9 +83,9 @@ public class PedidoService {
                                 .map(this::converterDTO);
         }
 
-        public List<PedidoDTO> listarTodosPedidosPorStatus(EstadoPedido status) {
+        public Page<PedidoDTO> listarTodosPedidosPorStatus(EstadoPedido status, Pageable pageable) {
 
-                return pedidoRepository.findByStatus(status).stream().map(this::converterDTO).toList();
+                return pedidoRepository.findByStatus(status, pageable).map(this::converterDTO);
                 
         }
 

@@ -32,18 +32,18 @@ public class PedidoController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<PedidoDTO>> listarTodos(
-            @RequestParam(required = false) EstadoPedido status) {
+    public ResponseEntity<Page<PedidoDTO>> listarTodos(
+            @RequestParam(required = false) EstadoPedido status, Pageable pageable) {
 
         if (status != null) {
             return ResponseEntity.ok(
                     service
                             .listarTodosPedidosPorStatus(
-                                    status));
+                                    status, pageable));
         }
 
         return ResponseEntity.ok(
-                service.listar());
+                service.listar(pageable));
     }
 
     @GetMapping("/meus")

@@ -16,5 +16,5 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     Optional<Pedido> findByIdAndUsuario(Long id, Usuario usuario);
     boolean existsByEnderecoId(Long enderecoId);
     Page<Pedido> findByUsuarioAndStatus(Usuario usuario, EstadoPedido status, Pageable pageable);
-    List<Pedido> findByStatus(EstadoPedido status);
+    Page<Pedido> findByStatus(EstadoPedido status, Pageable pageable);
 }
