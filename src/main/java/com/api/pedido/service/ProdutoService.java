@@ -3,7 +3,10 @@ package com.api.pedido.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.api.pedido.domain.Produto;
@@ -16,13 +19,10 @@ public class ProdutoService {
     @Autowired
     private ProdutoRepository repository;
 
-    public List<ProdutoDTO> listar() {
-        List<Produto> lista = repository.findAll();
-        
-        return lista.stream()
-            .map(this::converterDTO)
-            .toList();
-
+    public Page<ProdutoDTO> listar(Pageable pageable) {
+        return repository
+            .findAll(pageable)
+            .map(this::converterDTO);
     }
 
     public ProdutoDTO buscarPorId(Long id) {

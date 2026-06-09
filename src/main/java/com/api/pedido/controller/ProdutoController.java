@@ -2,7 +2,10 @@ package com.api.pedido.controller;
 
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.pedido.domain.Produto;
 import com.api.pedido.dtos.ProdutoDTO;
 import com.api.pedido.dtos.ProdutoRequestDTO;
 import com.api.pedido.service.ProdutoService;
@@ -28,8 +30,8 @@ public class ProdutoController {
 
     @GetMapping
     @PreAuthorize("hasRole('CLIENTE')")
-    public ResponseEntity<List<ProdutoDTO>> listar(){
-        return ResponseEntity.ok(service.listar());
+    public ResponseEntity<Page<ProdutoDTO>> listar(Pageable pageable){
+        return ResponseEntity.ok(service.listar(pageable));
     }
 
     @GetMapping("/{id}")
